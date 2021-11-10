@@ -1,0 +1,36 @@
+# encoding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# VM box image
+VAGRANT_BOX = 'gusztavvargadr/windows-server'
+# Memorable name for your
+VM_NAME = 'win-client'
+# VM User — 'vagrant' by default
+VM_USER = 'vagrant'   
+# Username on your Mac
+MAC_USER = 'prageeth.pasyala'
+# Host folder to sync
+HOST_PATH = '/Users/' + MAC_USER + '/Documents/shared/'   
+# Where to sync to on Guest — 'vagrant' is the default user name
+GUEST_PATH = '/home/' + VM_USER + '/' + VM_NAME
+
+# Vagrant box from Hashicorp
+Vagrant.configure(2) do |config|
+  config.vm.box = VAGRANT_BOX
+  
+  # Actual machine name
+  config.vm.hostname = VM_NAME
+  config.vm.provider "virtualbox" do |v|
+    v.gui = true
+    v.name = VM_NAME
+    v.memory = 4096
+  end
+  # PRIVATE NETWORK — set private network with static ip
+  config.vm.network "private_network", ip: "192.168.50.20",
+    virtualbox__intnet: "private_network"
+
+  # Disable default Vagrant folder, use a unique path per project
+  config.vm.synced_folder HOST_PATH, GUEST_PATH
+  config.vm.synced_folder '.', '/home/' + VM_USER + '', disabled: true  
+end
